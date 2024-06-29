@@ -43,4 +43,4 @@ Contributions are welcome! If you have any improvements or new features to sugge
 This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ## Author
-Developed by [Stephen AT](https://github.com/CodesStephenn).
+Developed by [Stephen AT](https://github.com/Codestephenn).
