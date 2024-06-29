@@ -1,4 +1,4 @@
-html, body{
+html, body {
   padding: 0;
   margin: 0;
   font-family: 'Rubik', Sans-Serif;
@@ -7,8 +7,7 @@ html, body{
   user-select: none;
 }
 
-
-.cal-container{
+.cal-container {
   display: flex;
   flex-direction: column;
   max-width: 320px;
@@ -26,10 +25,9 @@ input {
   font-family: 'Rubik', Sans-Serif;
   margin: 20px auto;
   width: 90%;
-  
 }
 
-.cal-btn{
+.cal-btn {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -37,26 +35,30 @@ input {
   margin: 0 auto;
 }
 
-
-button{
+button {
   font-size: 30px;
   background-color: #223343;
-  box-shadow: 0px 1px 4px rgba(0,0,0,0.2);
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
   width: 65px;
-  padding: 20px 20px ;
+  padding: 20px 20px;
   border-radius: 8px;
   flex-grow: 1;
   text-align: center;
   border: none;
   color: #fff;
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
 }
 
-.operators{
+button:hover {
+  background-color: #1E90FF; /* Change background color on hover */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.operators {
   background-color: #1A2A3A;
   color: #fff;
-
 }
 
-#equals{
+#equals {
   background-color: #5191FF;
 }

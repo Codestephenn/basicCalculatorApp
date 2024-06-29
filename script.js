@@ -1,122 +1,144 @@
-let firstOperand = "";
-let secondOperand = "";
-let operator = "";
-let shouldResetDisplay = false;
+document.addEventListener('DOMContentLoaded', function () {
+  const display = document.getElementById('display');
+  const buttons = document.querySelectorAll('.cal-btn button');
+  let currentInput = '';
+  let operator = '';
+  let previousInput = '';
+  let expression = '';
+  let resultDisplayed = false;
 
-const valuesBtn = document.querySelectorAll(".values");
-const operatorsBtn = document.querySelectorAll(".operators");
-const inputEl = document.getElementById("display");
-const equalsBtn = document.getElementById("equals");
-
-// Basic arithmetic functions
-function add(num1, num2) {
-  return num1 + num2;
-}
-
-function subtract(num1, num2) {
-  return num1 - num2;
-}
-
-function multiply(num1, num2) {
-  return num1 * num2;
-}
-
-function divide(num1, num2) {
-  if (num2 === 0) {
-    return "Error"; // Prevent division by zero
+  // Arithmetic functions
+  function add(a, b) {
+    return a + b;
   }
-  let result = (num1 / num2).toFixed(2);
-  return Number(result);
-}
 
-// Function to operate based on the operator
-function operate(num1, operatorSign, num2) {
-  num1 = Number(num1);
-  num2 = Number(num2);
-  switch (operatorSign) {
-    case "+":
-      return add(num1, num2);
-    case "-":
-      return subtract(num1, num2);
-    case "X":
-      return multiply(num1, num2);
-    case "÷":
-      return divide(num1, num2);
-    default:
-      return null;
+  function subtract(a, b) {
+    return a - b;
   }
-}
 
-// Clear the display
-function clearDisplay() {
-  inputEl.value = "";
-  firstOperand = "";
-  secondOperand = "";
-  operator = "";
-}
+  function multiply(a, b) {
+    return a * b;
+  }
 
-// Delete the last character from the display
-function deleteLastCharacter() {
-  inputEl.value = inputEl.value.slice(0, -1);
-}
+  function divide(a, b) {
+    if (b === 0) return 'Error'; // Handle division by zero
+    return a / b;
+  }
 
-// Calculate percentage
-function calculatePercentage() {
-  const currentValue = Number(inputEl.value);
-  const percentageValue = (currentValue / 100).toString();
-  inputEl.value = percentageValue;
-}
+  function modulo(a, b) {
+    return a % b;
+  }
 
-// Add event listeners to the values buttons
-valuesBtn.forEach(value => {
-  value.addEventListener('click', () => {
-    if (shouldResetDisplay) {
-      inputEl.value = "";
-      shouldResetDisplay = false;
+  function floorDivide(a, b) {
+    return Math.floor(a / b);
+  }
+
+  // Operate function
+  function operate(op, a, b) {
+    a = parseFloat(a);
+    b = parseFloat(b);
+    switch (op) {
+      case '+':
+        return add(a, b);
+      case '-':
+        return subtract(a, b);
+      case 'X':
+        return multiply(a, b);
+      case '÷':
+        return divide(a, b);
+      case '%':
+        return modulo(a, b);
+      default:
+        return b;
     }
-    inputEl.value += value.textContent;
-  });
-});
+  }
 
-// Add event listeners to the operators buttons
-operatorsBtn.forEach(operatorBtn => {
-  operatorBtn.addEventListener('click', () => {
-    console.log(firstOperand)
-    console.log(operator)
-    const operatorValue = operatorBtn.textContent;
-    if (operatorValue === "C") {
-      clearDisplay();
-    } else if (operatorValue === "D") {
-      deleteLastCharacter();
-    } else if (["+", "-", "X", "÷"].includes(operatorValue)) {
-      if (firstOperand === "") {
-        firstOperand = inputEl.value;
-        operator = operatorValue;
-        shouldResetDisplay = true;
-      } else if (operator !== "") {
-        secondOperand = inputEl.value;
-        const result = operate(firstOperand, operator, secondOperand);
-        inputEl.value = result;
-        firstOperand = result;
-        operator = operatorValue;
-        shouldResetDisplay = true;
+  function updateDisplay() {
+    display.value = expression || '0';
+  }
+
+  function handleInput(value) {
+    if (!isNaN(value) || value === '.') {
+      if (value === '.' && currentInput.includes('.')) return;
+      if (value === '0' && (currentInput === '' || currentInput === '0')) return;
+      if (resultDisplayed) {
+        currentInput = value;
+        resultDisplayed = false;
+      } else {
+        currentInput += value;
       }
-    } else if (operatorValue === "%") {
-      calculatePercentage();
+      expression += value;
+      updateDisplay();
+    } else if (['÷', 'X', '-', '+', '%'].includes(value)) {
+      if (currentInput) {
+        if (previousInput && operator && currentInput) {
+          previousInput = operate(operator, previousInput, currentInput).toString();
+          expression = previousInput + value;
+        } else {
+          previousInput = currentInput;
+          expression += value;
+        }
+        operator = value;
+        currentInput = '';
+        resultDisplayed = false;
+        updateDisplay();
+      }
+    } else if (value === 'C') {
+      currentInput = '';
+      operator = '';
+      previousInput = '';
+      expression = '';
+      display.value = '0';
+    } else if (value === 'D') {
+      if (currentInput) {
+        currentInput = currentInput.slice(0, -1);
+        expression = expression.slice(0, -1);
+        updateDisplay();
+      } else if (previousInput && operator) {
+        operator = '';
+        expression = previousInput;
+        updateDisplay();
+      }
+    } else if (value === '=') {
+      if (currentInput && previousInput) {
+        const result = operate(operator, previousInput, currentInput);
+        expression = result.toString();
+        display.value = expression;
+        currentInput = result.toString();
+        operator = '';
+        previousInput = '';
+        resultDisplayed = true;
+      }
+    }
+  }
+
+  buttons.forEach(button => {
+    button.addEventListener('click', function () {
+      handleInput(button.textContent);
+    });
+  });
+
+  document.addEventListener('keydown', function (e) {
+    let key = e.key;
+
+    if (key >= '0' && key <= '9') {
+      handleInput(key);
+    } else if (key === '.') {
+      handleInput(key);
+    } else if (key === '+') {
+      handleInput('+');
+    } else if (key === '-') {
+      handleInput('-');
+    } else if (key === '*') {
+      handleInput('X');
+    } else if (key === '/') {
+      handleInput('÷');
+    } else if (key === 'Enter' || key === '=') {
+      handleInput('=');
+    } else if (key === 'Backspace') {
+      handleInput('D');
+    } else if (key === 'Escape') {
+      handleInput('C');
     }
   });
-});
-
-// Add event listener to the equals button
-equalsBtn.addEventListener('click', () => {
-  if (firstOperand !== "" && operator !== "") {
-    secondOperand = inputEl.value;
-    const result = operate(firstOperand, operator, secondOperand);
-    inputEl.value = result;
-    firstOperand = result;
-    operator = "";
-    shouldResetDisplay = true;
-    console.log("=clicked")
-    
-  }
 });
