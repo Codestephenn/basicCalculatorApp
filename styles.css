@@ -27,6 +27,13 @@ input {
   width: 90%;
 }
 
+/* Media query for desktop screens */
+@media (min-width: 1024px) {
+  input {
+    border: 2px solid #223343; /* Add borders on desktop screens */
+  }
+}
+
 .cal-btn {
   display: flex;
   flex-wrap: wrap;
@@ -60,5 +67,5 @@ button:hover {
 }
 
 #equals {
-  background-color: #5191FF;
+  background-color: #26EAB9;
 }
